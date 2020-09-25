@@ -486,23 +486,28 @@ func typestring(col *schemas.Column) string {
 	if s == "[]uint8" {
 		return "[]byte"
 	}
-	if col.Nullable {
-		switch t.Kind() {
-		case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Uint8, reflect.Uint16:
-			return "sql.NullInt32"
-		case reflect.Int, reflect.Int64, reflect.Uint32, reflect.Uint64:
-			return "sql.NullInt64"
-		case reflect.Bool:
-			return "sql.NullBool"
-		case reflect.Float32, reflect.Float64:
-			return "sql.NullFloat64"
-		case reflect.String:
-			return "sql.NullString"
-		}
-		if t.String() == "time.Time" {
-			return "sql.NullTime"
-		}
+	if s == "int" {
+		return "uint32"
 	}
+	// 这里注释
+
+	//if col.Nullable {
+	//	switch t.Kind() {
+	//	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Uint8, reflect.Uint16:
+	//		return "sql.NullInt32"
+	//	case reflect.Int, reflect.Int64, reflect.Uint32, reflect.Uint64:
+	//		return "sql.NullInt64"
+	//	case reflect.Bool:
+	//		return "sql.NullBool"
+	//	case reflect.Float32, reflect.Float64:
+	//		return "sql.NullFloat64"
+	//	case reflect.String:
+	//		return "sql.NullString"
+	//	}
+	//	if t.String() == "time.Time" {
+	//		return "sql.NullTime"
+	//	}
+	//}
 	return s
 }
 
