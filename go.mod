@@ -1,4 +1,4 @@
-module github.com/Yimismi/sql2go
+module github.com/SFLAQiu/sql2go
 
 go 1.14
 
