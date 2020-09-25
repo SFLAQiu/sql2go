@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/Yimismi/sql2go"
+	"github.com/SFLAQiu/sql2go"
 	"testing"
 )
 
