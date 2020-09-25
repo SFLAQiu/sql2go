@@ -47,6 +47,7 @@ type convertArgs struct {
 	tablePrefix string
 	genJson     bool
 	genXorm     bool
+	genGorm     bool
 	tmpl        string
 	otherTags   string
 }
@@ -106,6 +107,11 @@ func (c *convertArgs) SetTmpl(tmplType TmplType) *convertArgs {
 
 func (c *convertArgs) SetGenXorm(gen bool) *convertArgs {
 	c.genXorm = gen
+	return c
+}
+
+func (c *convertArgs) SetGenGorm(gen bool) *convertArgs {
+	c.genGorm = gen
 	return c
 }
 
@@ -189,7 +195,7 @@ func NewGolangTmp(args *convertArgs) *GolangTmp {
 			"ColMapper":   colMapper.Table2Obj,
 			"TableMapper": tableMapper.Table2Obj,
 			"Type":        typestring,
-			"Tag":         getTag(colMapper, args.genJson, args.genXorm, otherTags),
+			"Tag":         getTag(colMapper, args.genJson, args.genXorm, args.genGorm, otherTags),
 			"UnTitle":     unTitle,
 			"gt":          gt,
 			"getCol":      getCol,
@@ -200,7 +206,7 @@ func NewGolangTmp(args *convertArgs) *GolangTmp {
 	}
 }
 
-func getTag(mapper names.Mapper, genJson bool, genXorm bool, otherTags []string) func(table *schemas.Table, col *schemas.Column) string {
+func getTag(mapper names.Mapper, genJson bool, genXorm bool, genGorm bool, otherTags []string) func(table *schemas.Table, col *schemas.Column) string {
 	return func(table *schemas.Table, col *schemas.Column) string {
 		isNameId := (mapper.Table2Obj(col.Name) == "Id")
 		isIdPk := isNameId && typestring(col) == "int64"
@@ -301,6 +307,13 @@ func getTag(mapper names.Mapper, genJson bool, genXorm bool, otherTags []string)
 		jsonName = snakeMapper.Obj2Table(jsonName)
 		if genJson {
 			tags = append(tags, "json:\""+jsonName+"\"")
+		}
+		if len(res) > 0 && genGorm {
+			primary := ""
+			if col.IsPrimaryKey {
+				primary = ";primary_key"
+			}
+			tags = append(tags, "gorm:\"column:"+col.Name+primary+"\"")
 		}
 		if len(res) > 0 && genXorm {
 			tags = append(tags, "xorm:\""+strings.Join(res, " ")+"\"")
